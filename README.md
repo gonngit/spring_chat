@@ -1,1 +1,1 @@
-# chat app by flutter and spring boot
+# chat server by spring boot
