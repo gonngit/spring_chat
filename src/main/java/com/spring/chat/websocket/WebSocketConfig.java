@@ -1,6 +1,5 @@
-package com.spring.chat.controller;
+package com.spring.chat.websocket;
 
-import com.spring.chat.controller.WebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -16,6 +15,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(new WebSocketHandler(), "/ws/chat").setAllowedOrigins("*");
+		registry.addHandler(webSocketHandler, "/ws/chat").setAllowedOrigins("*");
 	}
 }
