@@ -1,33 +1,26 @@
 package com.spring.chat.controller;
 
 import com.spring.chat.entity.ChatRoom;
-import com.spring.chat.service.ChatService;
+import com.spring.chat.entity.Message;
+import com.spring.chat.entity.MessageType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import java.util.List;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.stereotype.Controller;
 
 
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("/chat")
+@Controller
 public class ChatController {
 	
-	private final ChatService chatService;
+	private final SimpMessageSendingOperations messagingTemplate;
 	
-	@PostMapping
-	public ChatRoom createRoom(@RequestParam("name") String name) {
-		System.out.println("hello");
-		return chatService.createRoom(name);
-	}
-	
-	@GetMapping
-	public List<ChatRoom> getChatRooms() {
-		return chatService.getChatRooms();
+	@MessageMapping("/chat/message")
+	public void message(Message message) {
+		if (MessageType.JOIN.equals(message.getType())) {
+			message.setContent(message.getSender() + " has joined the chat");
+		}
+		messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
 	}
 
 }
