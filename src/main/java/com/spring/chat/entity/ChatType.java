@@ -1,6 +1,6 @@
 package com.spring.chat.entity;
 
 //join = enter, chat = talk
-public enum MessageType {
+public enum ChatType {
 	CHAT, JOIN, LEAVE
 }
