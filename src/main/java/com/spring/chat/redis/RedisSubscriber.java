@@ -13,32 +13,19 @@ import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+
 @Slf4j
 @Service
-public class RedisSubscriber implements MessageListener {
+@RequiredArgsConstructor
+public class RedisSubscriber {
+	
     private final ObjectMapper objectMapper;
-    private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessageSendingOperations messagingTemplate;
 
-    @Autowired
-    public RedisSubscriber(ObjectMapper objectMapper, 
-                           @Qualifier("redisTemplate") RedisTemplate<String, Object> redisTemplate,
-                           SimpMessageSendingOperations messagingTemplate) {
-        this.objectMapper = objectMapper;
-        this.redisTemplate = redisTemplate;
-        this.messagingTemplate = messagingTemplate;
-    }
-
-    // when a message is published to a channel, this method is called and the message is sent to the WebSocket subscribers
-    @Override
-    public void onMessage(Message message, byte[] pattern) {
+	public void sendMessage(String pubMessage) {
         try {
-            // deserialize
-            String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
-            // map to Message object
-            Chat roomMessage = objectMapper.readValue(publishMessage, Chat.class);
-            // Send the message to the WebSocket subscribers
-            messagingTemplate.convertAndSend("/sub/chat/room/" + roomMessage.getRoomId(), roomMessage);
+        	Chat message = objectMapper.readValue(pubMessage, Chat.class); 
+        	messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
