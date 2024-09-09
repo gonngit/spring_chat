@@ -25,14 +25,24 @@ public class ChatRoomController {
 	// chat list
 	@GetMapping("/room")
 	public String rooms(Model model) {
+		System.out.println("Accessing /chat/room");
 		return "/chat/room";
 	}
  
-	// get all chats
+//	// get all chats
+//	@GetMapping("/rooms")
+//	@ResponseBody
+//	public List<ChatRoom> room() {
+//	    return chatRoomRepository.getChatRooms();
+//	}
+	
 	@GetMapping("/rooms")
 	@ResponseBody
 	public List<ChatRoom> room() {
-	    return chatRoomRepository.getChatRooms();
+		List<ChatRoom> chatRooms = chatRoomRepository.getChatRooms();
+		chatRooms.stream().forEach(room -> room.setUserCount(chatRoomRepository.getUserCount(room.getRoomId())));
+		System.out.println("Accessing /chat/roomsss");
+		return chatRooms;
 	}
 	
 	// create chat
@@ -64,4 +74,7 @@ public class ChatRoomController {
 		String name = auth.getName();
 		return LoginInfo.builder().name(name).token(jwtTokenProvider.generateToken(name)).build();
 	}
+	
+	
+	
 }

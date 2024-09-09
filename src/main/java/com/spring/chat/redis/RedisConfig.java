@@ -10,7 +10,11 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 
+
+@RequiredArgsConstructor
 @Configuration
 public class RedisConfig {
 	
@@ -36,6 +40,7 @@ public class RedisConfig {
 	
 	// template that provides Redis operations
 	@Bean
+	@Primary
 	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
 	    RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 	    redisTemplate.setConnectionFactory(connectionFactory);
@@ -43,4 +48,5 @@ public class RedisConfig {
 	    redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
 	    return redisTemplate;
 	}
+	
 }
